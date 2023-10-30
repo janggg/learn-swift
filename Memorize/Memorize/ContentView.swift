@@ -44,7 +44,7 @@ struct ContentView: View {
             CardView(isFaceUp: true)
             CardView()
             CardView()
-            CardView()
+            CardView(isFaceUp: true)
         }
         .foregroundColor(.teal)
         .padding()
@@ -52,20 +52,25 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    var isFaceUp: Bool = false
+    @State var isFaceUp = false
+    // we're using var here to allow for different parameters from the default
+    // @State is providing as the "pointer" to this variable
     
     var body: some View {
         ZStack {
+            let base = RoundedRectangle(cornerRadius: 12)
+            // let: is a constant -- does not change, whereas var is a "variable"
             if isFaceUp {
-                RoundedRectangle(cornerRadius: 12)
-                    .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(lineWidth: 2)
-                Text("👀")
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 2)
+                Text("👀").font(.largeTitle)
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                base.fill()
             }
-            
+        }
+        .onTapGesture {
+            isFaceUp.toggle()
+            // isFaceUp = !isFaceUp
         }
     }
 }
