@@ -39,12 +39,17 @@ struct ContentView: View {
         // View modifier scope applies to the elements inside the given VStack {}
         */
     
-
+        
+        let emojis = ["👀","👅","👂","👍"]
+        // let emojis: [String] = [] 
+        // let emojis: Array<String> = []
+        
         HStack {
-            CardView(isFaceUp: true)
-            CardView()
-            CardView()
-            CardView(isFaceUp: true)
+            ForEach(emojis.indices, id: \.self) { index in
+                // 0...4: 0 upto and including 4
+                // 0..<4: 0 upto 4
+                CardView(content: emojis[index])
+            }
         }
         .foregroundColor(.teal)
         .padding()
@@ -52,7 +57,8 @@ struct ContentView: View {
 }
 
 struct CardView: View {
-    @State var isFaceUp = false
+    let content: String
+    @State var isFaceUp = true
     // we're using var here to allow for different parameters from the default
     // @State is providing as the "pointer" to this variable
     
@@ -63,7 +69,7 @@ struct CardView: View {
             if isFaceUp {
                 base.foregroundColor(.white)
                 base.strokeBorder(lineWidth: 2)
-                Text("👀").font(.largeTitle)
+                Text(content).font(.largeTitle)
             } else {
                 base.fill()
             }
