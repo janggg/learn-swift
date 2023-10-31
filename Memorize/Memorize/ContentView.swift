@@ -13,6 +13,12 @@ import SwiftUI
 struct ContentView: View { 
     // this grammar is saying "this ContentView behaves like a View"
 
+    let emojis = ["👀","👅","👂","👍","A","B","C","D","E"]
+    // let emojis: [String] = []
+    // let emojis: Array<String> = []
+    
+    @State var cardCount: Int = 4
+    
     var body: some View {
         // var: Computed property. this var is a property of this struct.
         // the value of this variable isn't stored somewhere, but rather COMPUTED
@@ -38,34 +44,83 @@ struct ContentView: View {
         .padding()
         // View modifier scope applies to the elements inside the given VStack {}
         */
+        
+        VStack {
+            ScrollView {
+                cards
+            }
+            Spacer()
+            cardCountAdjusters
+        }
+        .padding()
+    }
     
-
-        HStack {
-            CardView(isFaceUp: true)
-            CardView()
-            CardView()
-            CardView()
+    var cards: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
+            // LazyVGrid uses as little space as possible
+            ForEach(0..<cardCount, id: \.self) { index in
+                // 0...4: 0 upto and including 4
+                // 0..<4: 0 upto 4
+                CardView(content: emojis[index])
+                    .aspectRatio(2/3, contentMode: .fit)
+            }
+            
         }
         .foregroundColor(.teal)
-        .padding()
+    }
+    
+    var cardCountAdjusters: some View {
+        HStack {
+            cardAdder
+            Spacer()
+            cardRemover
+        }
+        .imageScale(.large)
+        .font(.largeTitle)
+    }
+    
+    func cardCountAdjuster(by offset: Int, symbol: String) -> some View {
+        // by: external parameter name -- used when passing in an argument while calling this function
+        // offset: internale parameter name -- used inside this function, as shown below
+        // symbol: both external and internal name
+        Button(action: {
+            cardCount += offset
+        }, label: {
+            Image(systemName: symbol)
+        })
+        .disabled(cardCount + offset < 1 || cardCount + offset > emojis.count)
+    }
+    
+    var cardAdder: some View {
+        return cardCountAdjuster(by: +1, symbol: "rectangle.stack.badge.plus.fill")
+    }
+    
+    var cardRemover: some View {
+        return cardCountAdjuster(by: -1, symbol: "rectangle.stack.badge.minus")
     }
 }
 
 struct CardView: View {
-    var isFaceUp: Bool = false
+    let content: String
+    @State var isFaceUp = true
+    // we're using var here to allow for different parameters from the default
+    // @State is providing as the "pointer" to this variable, allowing for a temporary modification in value
     
     var body: some View {
         ZStack {
-            if isFaceUp {
-                RoundedRectangle(cornerRadius: 12)
-                    .foregroundColor(.white)
-                RoundedRectangle(cornerRadius: 12)
-                    .strokeBorder(lineWidth: 2)
-                Text("👀")
-            } else {
-                RoundedRectangle(cornerRadius: 12)
+            let base = RoundedRectangle(cornerRadius: 12)
+            // let: is a constant -- does not change, whereas var is a "variable"
+            Group {
+                base.foregroundColor(.white)
+                base.strokeBorder(lineWidth: 2)
+                Text(content).font(.largeTitle)
             }
-            
+            .opacity(isFaceUp ? 1 : 0)
+            base.fill().opacity(isFaceUp ? 0 : 1)
+        }
+        .onTapGesture {
+            isFaceUp.toggle()
+            // isFaceUp = !isFaceUp
         }
     }
 }
