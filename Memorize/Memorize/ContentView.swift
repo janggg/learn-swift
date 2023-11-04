@@ -13,11 +13,11 @@ import SwiftUI
 struct ContentView: View { 
     // this grammar is saying "this ContentView behaves like a View"
 
-    let emojis = ["👀","👅","👂","👍","A","B","C","D","E"]
+    @State var emojis: Array<String> = []
     // let emojis: [String] = []
     // let emojis: Array<String> = []
     
-    @State var cardCount: Int = 4
+    //@State var cardCount: Int = 0
     
     var body: some View {
         // var: Computed property. this var is a property of this struct.
@@ -46,29 +46,85 @@ struct ContentView: View {
         */
         
         VStack {
+            title
             ScrollView {
                 cards
             }
             Spacer()
-            cardCountAdjusters
+            cardThemeAdjusters
+            //cardCountAdjusters
         }
         .padding()
     }
     
+    var title: some View {
+        Text("Memorize!").font(.largeTitle)
+    }
+    
     var cards: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 120))]) {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 80))]) {
             // LazyVGrid uses as little space as possible
-            ForEach(0..<cardCount, id: \.self) { index in
+            ForEach(0..<emojis.count, id: \.self) { index in
                 // 0...4: 0 upto and including 4
                 // 0..<4: 0 upto 4
                 CardView(content: emojis[index])
-                    .aspectRatio(2/3, contentMode: .fit)
+                    .aspectRatio(4/4, contentMode: .fit)
             }
             
         }
         .foregroundColor(.teal)
     }
     
+    var cardThemeAdjusters: some View {
+        HStack {
+            Spacer()
+            cardThemeOne
+            Spacer()
+            cardThemeTwo
+            Spacer()
+            cardThemeThree
+            Spacer()
+            
+        }
+        .imageScale(.large)
+        .font(.largeTitle)
+    }
+    
+    var cardThemeOne: some View {
+        return cardThemeChooser(
+            theme: ["😀","😂","😍","🥸","😡","🥶"],
+            symbol: "face.smiling.inverse",
+            symbol_text: "Faces")
+    }
+    
+    var cardThemeTwo: some View {
+        return cardThemeChooser(
+            theme: ["🐶","🐱","🐭","🐻","🐼","🐷","🐸","🐵"],
+            symbol: "cat.circle.fill",
+            symbol_text: "Animals")
+    }
+    
+    var cardThemeThree: some View {
+        return cardThemeChooser(
+            theme: ["🍎","🍌","🍉","🍇","🍍","🍑","🥝"],
+            symbol: "fork.knife.circle.fill",
+            symbol_text: "Fruits")
+    }
+    
+    func cardThemeChooser(theme: Array<String>, symbol: String, symbol_text: String) -> some View {
+        Button(action: {
+            emojis = theme
+            emojis += emojis
+            emojis.shuffle()
+        }, label: {
+            VStack {
+                Image(systemName: symbol)
+                Text(symbol_text).font(.caption)
+            }
+        })
+    }
+    
+    /*
     var cardCountAdjusters: some View {
         HStack {
             cardAdder
@@ -98,11 +154,12 @@ struct ContentView: View {
     var cardRemover: some View {
         return cardCountAdjuster(by: -1, symbol: "rectangle.stack.badge.minus")
     }
+    */
 }
 
 struct CardView: View {
     let content: String
-    @State var isFaceUp = true
+    @State var isFaceUp = false
     // we're using var here to allow for different parameters from the default
     // @State is providing as the "pointer" to this variable, allowing for a temporary modification in value
     
