@@ -77,11 +77,13 @@ struct ContentView: View {
     
     var cardThemeAdjusters: some View {
         HStack {
+            Spacer()
             cardThemeOne
             Spacer()
             cardThemeTwo
             Spacer()
             cardThemeThree
+            Spacer()
             
         }
         .imageScale(.large)
@@ -89,40 +91,35 @@ struct ContentView: View {
     }
     
     var cardThemeOne: some View {
-        Button(action: {
-            emojis = ["😀","😂","😍","🥸","😡","🥶"]
-            emojis += emojis
-            emojis.shuffle()
-        }, label: {
-            VStack {
-                Image(systemName: "face.smiling.inverse")
-                Text("Faces").font(.caption)
-            }
-        })
+        return cardThemeChooser(
+            theme: ["😀","😂","😍","🥸","😡","🥶"],
+            symbol: "face.smiling.inverse",
+            symbol_text: "Faces")
     }
     
     var cardThemeTwo: some View {
-        Button(action: {
-            emojis = ["🐶","🐱","🐭","🐻","🐼","🐷","🐸","🐵"]
-            emojis += emojis
-            emojis.shuffle()
-        }, label: {
-            VStack {
-                Image(systemName: "cat.circle.fill")
-                Text("Animals").font(.caption)
-            }
-        })
+        return cardThemeChooser(
+            theme: ["🐶","🐱","🐭","🐻","🐼","🐷","🐸","🐵"],
+            symbol: "cat.circle.fill",
+            symbol_text: "Animals")
     }
     
     var cardThemeThree: some View {
+        return cardThemeChooser(
+            theme: ["🍎","🍌","🍉","🍇","🍍","🍑","🥝"],
+            symbol: "fork.knife.circle.fill",
+            symbol_text: "Fruits")
+    }
+    
+    func cardThemeChooser(theme: Array<String>, symbol: String, symbol_text: String) -> some View {
         Button(action: {
-            emojis = ["🍎","🍌","🍉","🍇","🍍","🍑","🥝"]
+            emojis = theme
             emojis += emojis
             emojis.shuffle()
         }, label: {
             VStack {
-                Image(systemName: "fork.knife.circle.fill")
-                Text("Fruits").font(.caption)
+                Image(systemName: symbol)
+                Text(symbol_text).font(.caption)
             }
         })
     }
